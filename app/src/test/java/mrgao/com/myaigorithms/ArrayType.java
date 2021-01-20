@@ -110,7 +110,7 @@ public class ArrayType {
     }
 
     public List<List<Integer>> threeSumOffical(int[] nums) {
-       int n = nums.length;
+        int n = nums.length;
         Arrays.sort(nums);
         List<List<Integer>> ans = new ArrayList<List<Integer>>();
         // 枚举 a
@@ -151,5 +151,82 @@ public class ArrayType {
 
 
     //***********************************************************************************************************************************************************************
+//    78. 子集
+//    给你一个整数数组 nums ，返回该数组所有可能的子集（幂集）。解集不能包含重复的子集。
+//
+//             
+//    示例 1：
+//
+//    输入：nums = [1,2,3]
+//    输出：[[],[1],[2],[1,2],[3],[1,3],[2,3],[1,2,3]]
+//    示例 2：
+//
+//    输入：nums = [0]
+//    输出：[[],[0]]
+//
+    //***********************************************************************************************************************************************************************
+    public List<List<Integer>> subsets_enumerate(int[] nums) {
+        /**
+         * 循环枚举
+         */
+        List<List<Integer>> res = new ArrayList<>();
+        res.add(new ArrayList<Integer>());
+        int length = nums.length;
+        for (int i = 0; i <length; i++) {
+            for (int j = 0; j <length ; j++) {
+                List<Integer> newSub = new ArrayList<>(res.get(j));
+                newSub.add(nums[i]);
+                res.add(newSub);
+            }
+        }
+        return res;
+    }
+
+    /**
+     * DFS，前序遍历
+     */
+    public static void preOrder(int[] nums, int i, ArrayList<Integer> subset, List<List<Integer>> res) {
+        if (i >= nums.length) return;
+        // 到了新的状态，记录新的路径，要重新拷贝一份
+        subset = new ArrayList<Integer>(subset);
+
+        // 这里
+        res.add(subset);
+        preOrder(nums, i + 1, subset, res);
+        subset.add(nums[i]);
+        preOrder(nums, i + 1, subset, res);
+    }
+
+
+    /**
+     * DFS，中序遍历
+     */
+    public static void inOrder(int[] nums, int i, ArrayList<Integer> subset, List<List<Integer>> res) {
+        if (i >= nums.length) return;
+        subset = new ArrayList<Integer>(subset);
+
+        inOrder(nums, i + 1, subset, res);
+        subset.add(nums[i]);
+        // 这里
+        res.add(subset);
+        inOrder(nums, i + 1, subset, res);
+    }
+
+    /**
+     * DFS，后序遍历
+     */
+    public static void postOrder(int[] nums, int i, ArrayList<Integer> subset, List<List<Integer>> res) {
+        if (i >= nums.length) return;
+        subset = new ArrayList<Integer>(subset);
+
+        postOrder(nums, i + 1, subset, res);
+        subset.add(nums[i]);
+        postOrder(nums, i + 1, subset, res);
+        // 这里
+        res.add(subset);
+    }
+
+
+
 
 }
