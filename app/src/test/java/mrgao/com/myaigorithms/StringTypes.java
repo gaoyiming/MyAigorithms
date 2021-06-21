@@ -4,7 +4,9 @@ package mrgao.com.myaigorithms;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.regex.Pattern;
 
 import static org.junit.Assert.assertEquals;
@@ -17,7 +19,7 @@ public class StringTypes {
     @Test
     public void addition_isCorrect() {
         char[] a = {'a', 'b'};
-        assertEquals(1, consumer());
+        assertEquals("kjihgfedcba", reverse("abcdefghijk"));
     }
 
     /*5. 最长回文子串
@@ -305,68 +307,180 @@ public class StringTypes {
         return substring;
     }
 
-    int goodNum = 0;
 
     public int consumer() {
-        final goods goods = new goods();
-        Thread thread = new Thread() {
-            @Override
-            public void run() {
-                super.run();
-                try {
-                    while (true) {
-                        goods.provide();
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+        final Goods goods = new Goods();
 
-            }
-        };
-        Thread thread1 = new Thread() {
-            @Override
-            public void run() {
-                super.run();
-                try {
-                    while (true) {
+        Consumer consumer = new Consumer(goods);
+        Provider provider = new Provider(goods);
+        consumer.start();
+        provider.start();
 
-                        goods.consume();
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-        thread.start();
-        thread1.start();
+
         return 1;
+    }
+
+    //反转数组
+    public String reverse(String s) {
+        char[] chars = s.toCharArray();
+        if (chars.length == 0) {
+            return "";
+        }
+        if (chars.length == 1) {
+            return s;
+        }
+        for (int i = 0; i < chars.length / 2; i++) {
+            swap(chars, i);
+        }
+        return String.valueOf(chars);
+    }
+
+    private void swap(char[] chars, int i) {
+        char ch1 = chars[i];
+        chars[i] = chars[chars.length - 1 - i];
+        chars[chars.length - 1 - i] = ch1;
+    }
+
+
+    public ListNode reverseList(ListNode head) {
+        ListNode listNode = new ListNode(-1);
+
+        while (head != null) {
+            ListNode next = listNode.next;
+            listNode.next = head;
+            head = head.next;
+            listNode.next.next = next;
+        }
+
+        return listNode.next;
+
+
+    }
+
+    ;
+
+}
+
+//    定义一个函数，输入一个链表的头节点，反转该链表并输出反转后链表的头节点。
+//    示例:
+//    输入: 1->2->3->4->5->NULL
+//    输出: 5->4->3->2->1->NULL
+//    限制：
+//            0 <= 节点个数 <= 5000
+
+class ListNode {
+    int val;
+    ListNode next;
+
+    ListNode(int x) {
+        val = x;
+    }
+}
+
+class Consumer extends Thread {
+    Goods goods;
+
+    Consumer(Goods goods) {
+        this.goods = goods;
+    }
+
+    @Override
+    public void run() {
+        try {
+            while (true) {
+                goods.consume();
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+class Provider extends Thread {
+    Goods goods;
+
+    Provider(Goods goods) {
+        this.goods = goods;
+    }
+
+    @Override
+    public void run() {
+        try {
+            while (true) {
+                goods.provide();
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+class Goods {
+    int maxNum = 10;
+    public List list = new ArrayList<Object>();
+
+    public synchronized void provide() throws InterruptedException {
+        while (list.size() == maxNum) {
+            this.wait();
+        }
+        list.add(new Object());
+        System.out.println("provide" + list.size());
+        this.notifyAll();
+    }
+
+    public synchronized void consume() throws InterruptedException {
+        while (list.isEmpty()) {
+            this.wait();
+        }
+        list.remove(0);
+        System.out.println("consume" + list.size());
+        this.notifyAll();
     }
 
 
 }
 
+class TreeNode {
+    int val;
+    TreeNode left;
+    TreeNode right;
 
-class goods {
-    int goodNum = 0;
-
-
-    public synchronized void provide() throws InterruptedException {
-        while (goodNum >= 5) {
-            this.wait();
-        }
-        this.goodNum++;
-        System.out.println("provide" + this.goodNum);
-        this.notifyAll();
+    TreeNode() {
     }
 
-    public synchronized void consume() throws InterruptedException {
-        while (goodNum <= 0) {
-            this.wait();
-        }
-        this.goodNum--;
-        System.out.println("consume" + this.goodNum);
-        this.notifyAll();
+    TreeNode(int val) {
+        this.val = val;
     }
 
+    TreeNode(int val, TreeNode left, TreeNode right) {
+        this.val = val;
+        this.left = left;
+        this.right = right;
+    }
+}
 
+
+class Solution {
+    public TreeNode invertTree(TreeNode root) {
+        if (root != null) {
+            swap(root);
+        }
+        return root;
+    }
+
+    private void swap(TreeNode root) {
+        if (root.left != null || root.right != null) {
+            TreeNode node = root.left;
+            root.left = root.right;
+            root.right = node;
+            if (root.left != null) {
+                swap(root.left);
+            }
+
+            if (root.right != null) {
+                swap(root.right);
+            }
+        }
+
+    }
 }
