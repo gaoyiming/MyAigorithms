@@ -4,6 +4,7 @@ package mrgao.com.myaigorithms;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -19,6 +20,8 @@ public class StringTypes {
     @Test
     public void addition_isCorrect() {
         char[] a = {'a', 'b'};
+        ArrayList<Object> objects = new ArrayList<>(1);
+        objects.add(new Object());
         assertEquals("kjihgfedcba", reverse("abcdefghijk"));
     }
 
@@ -346,6 +349,10 @@ public class StringTypes {
         ListNode listNode = new ListNode(-1);
 
         while (head != null) {
+//            ListNode next = listNode.next;
+//            listNode.next = head;
+//            head = head.next;
+//            listNode.next.next = next;
             ListNode next = listNode.next;
             listNode.next = head;
             head = head.next;
@@ -356,8 +363,6 @@ public class StringTypes {
 
 
     }
-
-    ;
 
 }
 
@@ -483,4 +488,207 @@ class Solution {
         }
 
     }
+
+    public ListNode reverseBetween(ListNode head, int left, int right) {
+
+        // 定义一个dummyHead, 方便处理
+        ListNode dummyHead = new ListNode(0);
+        dummyHead.next = head;
+
+        // 初始化指针
+        ListNode pre = dummyHead;
+        ListNode now = dummyHead.next;
+
+        // 将指针移到相应的位置
+        for (int step = 1; step < left; step++) {
+            pre = pre.next;
+            now = now.next;
+        }
+
+        // 头插法插入节点
+        for (int i = 0; i < right - left; i++) {
+            ListNode removed = now.next;
+            now.next = now.next.next;
+
+            removed.next = pre.next;
+            pre.next = removed;
+        }
+
+        return dummyHead.next;
+
+    }
+
+    ////////////////////////////////// 二叉树的中序遍历///////////////////////////////////
+    public List<Integer> inorderTraversal(TreeNode root) {
+        ArrayList<Integer> list = new ArrayList();
+        addToArray(root, list);
+        return list;
+
+    }
+
+    private void addToArray(TreeNode root, ArrayList<Integer> list) {
+        if (root == null) {
+            return;
+        }
+//是否有必要生成新的节点？没有必要，因为没有涉及到更改
+        TreeNode leftNode = root.left;
+        addToArray(leftNode, list);
+        list.add(root.val);
+        TreeNode rightNode = root.right;
+        addToArray(rightNode, list);
+        int[] arr = new int[4];
+        bubbleSort(arr);
+    }
+
+
+    public void bubbleSort(int[] arr) {
+        int length = arr.length;
+        for (int i = 0; i < length; i++) {
+            for (int j = i + 1; i < length; j++) {
+                if (arr[i] > arr[j]) {
+                    int temp = arr[i];
+                    arr[i] = arr[j];
+                    arr[j] = temp;
+                }
+            }
+        }
+    }
+
+    public void quickSort(int[] arr, int begin, int end) {
+        if (arr != null && arr.length > 0 && begin < end) {
+            int temp = arr[begin];
+            int i = begin;
+            int j = end;
+            while (i < j) {
+                while (i < j) {
+                    if (arr[j] < temp) {
+                        swap(arr, i, j);
+                        break;
+                    } else {
+                        j--;
+                    }
+                }
+
+                while (i < j) {
+                    if (arr[i] > temp) {
+                        swap(arr, i, j);
+                        break;
+                    } else {
+                        i++;
+                    }
+                }
+                quickSort(arr, begin, i - 1);
+                quickSort(arr, j + 1, end);
+            }
+        }
+    }
+
+    /**
+     * 根据下标交换数组的两个元素
+     *
+     * @param arr    数组
+     * @param index1 下标1
+     * @param index2 下标2
+     */
+//    public static void swap(int[] arr, int index1, int index2) {
+//        int temp = arr[index1];
+//        arr[index1] = arr[index2];
+//        arr[index2] = temp;
+//    }
+//
+//    /**
+//     * 递归循环实现快排
+//     *
+//     * @param arr        数组
+//     * @param startIndex 快排的开始下标
+//     * @param endIndex   快排的结束下标
+//     */
+//    public static void quickSort(int[] arr, int startIndex, int endIndex) {
+//        if (arr != null && arr.length > 0) {
+//            int start = startIndex, end = endIndex;
+//            //target是本次循环要排序的元素，每次循环都是确定一个元素的排序位置，这个元素都是开始下标对应的元素
+//            int target = arr[startIndex];
+//            //开始循环，从两头往中间循环，相遇后循环结束
+//            while (start < end) {
+//                //从右向左循环比较，如果比target小，就和target交换位置，让所有比target小的元素到target的左边去
+//                while (start < end) {
+//                    if (arr[end] < target) {
+//                        swap(arr, start, end);
+//                        break;
+//                    } else {
+//                        end--;
+//                    }
+//                }
+//
+//                //从左向右循环比较，如果比target大，就和target交换位置，让所有比target大的元素到target的右边去
+//                while (start < end) {
+//                    if (arr[start] > target) {
+//                        swap(arr, start, end);
+//                        break;
+//                    } else {
+//                        start++;
+//                    }
+//                }
+//            }
+//            //确定target的排序后，如果target左边还有元素，继续递归排序
+//            if ((start - 1) > startIndex) {
+//                quickSort(arr, startIndex, start - 1);
+//            }
+//            //确定target的排序后，如果target右边还有元素，继续递归排序
+//            if ((end + 1) < endIndex) {
+//                quickSort(arr, end + 1, endIndex);
+//            }
+//        }
+//    }
+    public void quickSort(int[] arr, int begin, int end) {
+        if (begin < end) {
+            int temp = arr[begin];
+            int i = begin;
+            int j = end;
+            while (i < j) {
+                while (i < j) {
+                    if (arr[j] >= temp) {
+                        j--;
+                    } else {
+                        arr[i] = arr[j];
+                        break;
+                    }
+                }
+
+                while (i < j) {
+                    if (arr[i] <= temp) {
+                        i++;
+                    } else {
+                        arr[j] = arr[i];
+                        break;
+                    }
+                }
+
+                arr[i] = temp;
+            }
+            quickSort(arr, begin, i - 1);
+            quickSort(arr, j + 1, end);
+        }
+    }
+
+    public int majorityElement(int[] nums) {
+        HashMap<Integer, Integer> map = new HashMap();
+        int length = nums.length;
+        for (int i = 0; i < length; i++) {
+            Integer integer = map.get(nums[i]);
+            int num = map.get(nums[i]);
+            if (integer == null) {
+
+                map.put(nums[i], 1);
+            } else {
+                map.put(nums[i], num + 1);
+            }
+            if (num >= length / 2) {
+                return nums[i];
+            }
+        }
+        return 0;
+
+    }
+
 }
